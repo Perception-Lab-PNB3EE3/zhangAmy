@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Reaction Time Experiment</title>
+    <title>New Reaction Time Experiment</title>
     <script src="jspsych/jspsych.js"></script>
     <script src="jspsych/plugin-html-keyboard-response.js"></script>
     <script src="jspsych/plugin-image-keyboard-response.js"></script>
@@ -23,7 +23,7 @@
     /*add the trial to preload stimuli before the experiment trials*/
     var preload ={
         type: jsPsychPreload,
-        images: ['img/blue.png', 'img/orange.png']
+        images: ['img/blue_sq.png', 'img/orange_small.png'],
     };
     timeline.push(preload);
 
@@ -38,13 +38,13 @@
     var instructions = {
         type: jsPsychHtmlKeyboardResponse,
         stimulus: `
-            <p>In this experiment, a circle will appear in the centre of the screen.</p>
-            <p>If the circle is <strong>blue</strong>,press the letter F on the keyboard as fast as you can.</p>
-            <p>If the ciricle is <strong>orange</strong>, press the letter J as fast as you can.</p>
-            <div style='width: 700px;'>
-            <div style='float: left;'><img src='img/blue.png'></img>
+            <p>In this experiment, a shape will appear in the centre of the screen.</p>
+            <p>If you see a <strong>blue square</strong>, press the letter F on the keyboard as fast as you can.</p>
+            <p>If you see an <strong>orange ciricle</strong>, press the letter J as fast as you can.</p>
+            <div style='width: 700px; height: 350px;'>
+            <div style='float: left;'><img src='img/blue_sq.png'></img>
             <p class='small'><strong>Press the F key</strong></p></div>
-            <div style='float: right;'><image src ='img/orange.png'></image>
+            <div style='float: right;'><img src ='img/orange_small.png'></img>
             <p class='small'><strong>Press the J key</strong></p></div>
             </div>
             <p>Press any key to begin.</p>
@@ -54,24 +54,10 @@
     /*add the instruction to the timeline*/
     timeline.push(instructions);
 
-    /*define test trials and add it to timeline 
-    (but this is only good for single trials so we are not using it?)
-    var blue_trial = {
-        type:jsPsychImageKeyResponse,
-        stimulus: 'img/blue.png',
-        choices: ['f', 'j']
-    };
-    var orange_trial = {
-        type:jsPsychImageKeyResponse,
-        stimulus: 'img/orange.png',
-        choices: ['f', 'j']
-    };
-    timeline.push(blue_trial, orange_trial); */
-
     /*define trial stimuli array for timeline variables*/
     var test_stimuli = [
-        {stimulus: "img/blue.png", correct_response:'f'}, 
-        {stimulus: "img/orange.png", correct_response:'j'} /*add tags of corredct responses to the corresponding stimulus trials*/
+        {stimulus: "img/blue_sq.png", correct_response:'f'}, 
+        {stimulus: "img/orange_small.png", correct_response:'j'} /*add tags of corredct responses to the corresponding stimulus trials*/
     ];
     /*add fixation corss trial of different durations, run in between trials*/
     var fixation = {
@@ -108,7 +94,7 @@
     /*add the test_procedure to the main timeline*/
     timeline.push(test_procedure);
 
-    /*defind derife*/
+    /*defind debrief*/
     var debrief_block = {
   type: jsPsychHtmlKeyboardResponse,
     stimulus: function() {
@@ -117,9 +103,15 @@
     var correct_trials = trials.filter({correct: true});
     var accuracy = Math.round(correct_trials.count() / trials.count() * 100);
     var rt = Math.round(correct_trials.select('rt').mean());
+    var blue_trials = trials.filter({stimulus: "img/blue_sq.png"});
+    var orange_trials = trials.filter({stimulus: "img/orange_small.png"});
+    var blue_rt = Math.round(blue_trials.select('rt').mean());
+    var orange_rt = Math.round(orange_trials.select('rt').mean());
 
     return `<p>You responded correctly on ${accuracy}% of the trials.</p>
       <p>Your average response time was ${rt}ms.</p>
+      <p>Your average response time for blue squares was ${blue_rt}ms.</p>
+      <p>Your average response time for orange circles was ${orange_rt}ms.</p>
       <p>Press any key to complete the experiment. Thank you!</p>`;
 
         }
@@ -130,4 +122,5 @@
       jsPsych.run(timeline);
 
   </script>
+  
 </html>
