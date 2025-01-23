@@ -1,0 +1,99 @@
+<html>
+  <head>
+    <title>Reaction Time Experiment</title>
+    <script src="jspsych/jspsych.js"></script>
+    <script src="jspsych/plugin-html-keyboard-response.js"></script>
+    <script src="jspsych/plugin-image-keyboard-response.js"></script>
+    <script src="jspsych/plugin-preload.js"></script>
+    <link href="jspsych/jspsych.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body></body>
+  <script>
+    /*initialize jsPsych*/
+    var jsPsych = initJsPsych();
+ 
+    /*create timeline*/
+    var timeline = [];
+
+    /*add the trial to preload stimuli before the experiment trials*/
+    var preload ={
+        type: jsPsychPreload,
+        images: ['img/blue.png', 'img/orange.png']
+    };
+    timeline.push(preload);
+
+    /*define welcome message trial*/
+    var welcome = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: "Welcome to the experiment. Press any key to begin."
+    };
+    timeline.push(welcome);
+
+    /*define trial instructions and post-trial gap*/
+    var instructions = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: `
+            <p>In this experiment, a circle will appear in the centre of the screen.</p>
+            <p>If the circle is <strong>blue</strong>,press the letter F on the keyboard as fast as you can.</p>
+            <p>If the ciricle is <strong>orange</strong>, press the letter J as fast as you can.</p>
+            <div style='width: 700px;'>
+            <div style='float: left;'><img src='img/blue.png'></img>
+            <p class='small'><strong>Press the F key</strong></p></div>
+            <div style='float: right;'><image src ='img/orange.png'></image>
+            <p class='small'><strong>Press the J key</strong></p></div>
+            </div>
+            <p>Press any key to begin.</p>
+        `,
+        post_trial_gap: 2000
+    };
+    /*add the instruction to the timeline*/
+    timeline.push(instructions);
+
+    /*define test trials and add it to timeline 
+    (but this is only good for single trials so we are not using it?)
+    var blue_trial = {
+        type:jsPsychImageKeyResponse,
+        stimulus: 'img/blue.png',
+        choices: ['f', 'j']
+    };
+    var orange_trial = {
+        type:jsPsychImageKeyResponse,
+        stimulus: 'img/orange.png',
+        choices: ['f', 'j']
+    };
+    timeline.push(blue_trial, orange_trial); */
+
+    /*define trial stimuli array for timeline variables*/
+    var test_stimuli = [
+        {stimulus: "img/blue.pgn"}, 
+        {stimulus: "img/orange.png"}
+    ];
+    /*add fixation corss trial of different durations, run in between trials*/
+    var fixation = {
+        type:jsPsychHtmlKeyboardResponse,
+        stimulus: '<div style="font-size:60px;">+</div>',
+        choices: "NO KEYS",
+        trial_duration: function(){
+            return jsPsych.randomization.sampleWithoutReplacement([250, 500, 750, 1000, 1250, 1500, 1750, 2000], 1)[0];
+        }
+    };
+    /*define test trials, substitute in the stimulus value from the timeline variable*/
+    var test = {
+        type: jsPsychImageKeyboardResponse,
+        stimulus: jsPsych.timelineVariable('stimulus'),
+        choices: ['f', 'j']
+    };
+    /*define test procedures*/
+    var test_procedure = {
+        timeine: [fixation, test],
+        timeline_variables: test_stimuli,
+        randomize_order: true,
+        repetitions: 5
+    };
+    /*add the test_procedure to the main timeline*/
+    timeline.push(test_procedure);
+
+    /*start the experiment*/
+    jsPsych.run(timeline);
+  </script>
+</html>
