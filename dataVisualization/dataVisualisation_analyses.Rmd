@@ -26,7 +26,6 @@ Loading in csv file Load in csv file from <https://perception-lab-pnb3ee3.github
 here::i_am("dataVisualisation_analyses.Rmd")
 library(here)
 data <- read.csv(here("assignment_dataVis_dataset.csv")) 
-fig_path <- here("figures/") # path to save generated figures to
 op = 0 # saves plot inline (0) instead of in a file (1)
 ```
 
@@ -81,7 +80,7 @@ describe(df_condition4)
 
 ```{r, echo=TRUE, results='show'}
 condition1_plot <- ggplot(df_condition1, aes(x=x, y=y)) +
-  geom_point(size=1, alpha=0.6, stroke=0.4) +
+  geom_point(size=1, alpha=0.6) +
   geom_smooth(method=lm , color="red", fill="#6699ff", se=TRUE) +
     stat_poly_eq(aes(label = ..eq.label..), 
     formula = y ~ x, 
@@ -103,12 +102,12 @@ condition1_plot
 
 ```{r, echo=TRUE, results='show'}
 condition2_plot <- ggplot(df_condition2, aes(x=x, y=y)) +
-  geom_point(size=1, alpha=0.6, stroke=0.4) +
+  geom_point(size=1, alpha=0.6) +
   geom_smooth(method=lm , color="red", fill="#6699ff", se=TRUE) +
     stat_poly_eq(aes(label = ..eq.label..), 
     formula = y ~ x, 
-    label.x = max(df_condition2$x) * 0.5,  # Position near the right
-    label.y = max(df_condition2$y) * 0.9   # Position near the top
+    label.x = max(df_condition2$x) * 0.5, 
+    label.y = max(df_condition2$y) * 0.9  
   )+
   theme_ipsum() +
    labs(
@@ -125,12 +124,12 @@ condition2_plot
 
 ```{r, echo=TRUE, results='show'}
 condition3_plot <- ggplot(df_condition3, aes(x=x, y=y)) +
-  geom_point(size=1, alpha=0.6, stroke=0.4) +
+  geom_point(size=1, alpha=0.6) +
   geom_smooth(method=lm , color="red", fill="#6699ff", se=TRUE) +
     stat_poly_eq(aes(label = ..eq.label..), 
     formula = y ~ x, 
-    label.x = max(df_condition3$x) * 0.5,  # Position near the right
-    label.y = max(df_condition3$y) * 0.9   # Position near the top
+    label.x = max(df_condition3$x) * 0.5, 
+    label.y = max(df_condition3$y) * 0.9 
   )+
   theme_ipsum() +
    labs(
@@ -147,12 +146,12 @@ condition3_plot
 
 ```{r, echo=TRUE, results='show'}
 condition4_plot <- ggplot(df_condition4, aes(x=x, y=y)) +
-  geom_point(size=1, alpha=0.6, stroke=0.4) +
+  geom_point(size=1, alpha=0.6) +
   geom_smooth(method=lm , color="red", fill="#6699ff", se=TRUE) +
     stat_poly_eq(aes(label = ..eq.label..), 
     formula = y ~ x, 
-    label.x = max(df_condition4$x) * 0.5,  # Position near the right
-    label.y = max(df_condition4$y) * 0.9   # Position near the top
+    label.x = max(df_condition4$x) * 0.5, 
+    label.y = max(df_condition4$y) * 0.9   
   )+
   theme_ipsum() +
    labs(
