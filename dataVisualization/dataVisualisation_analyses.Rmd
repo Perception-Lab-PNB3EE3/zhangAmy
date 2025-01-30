@@ -3,31 +3,36 @@ title: "Data Visualization Assignment"
 output: html_notebook
 ---
 
-Amy's data visualizaation assignment for PNB3EE3
+Amy's data visualizationassignment for PNB3EE3
 
 # Loading in data
 
 ## Installing required packages
 
-```{r}
-list.of.packages <- c("tidyverse", "ggpubr", "ez", "corrplot", "car", "stats","PerformanceAnalytics", "afex", "emmeans", "mlma", "ggplot2", "ggExtra", "psych", "ggpubr", "here", "gridExtra", "ggridges","hrbrthemes")
+```{r, results='hide'}
+list.of.packages <- c("tidyverse", "ggpubr", "ez", "corrplot", "car", "stats","PerformanceAnalytics", "afex", "emmeans", "mlma", "ggplot2", "ggExtra", "psych", "ggpubr", "here", "gridExtra", "ggridges","hrbrthemes","psych","ggpmisc")
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages) 
+library(psych)
+library(ggplot2)
+library(hrbrthemes)
+library(ggpmisc)
 ```
 
-##Loading in csv file Loading in csv file Load in csv file from <https://perception-lab-pnb3ee3.github.io/courseBook/assignment_dataVis.html>
+## Loading in csv file 
+Loading in csv file Load in csv file from <https://perception-lab-pnb3ee3.github.io/courseBook/assignment_dataVis.html>
 
-```{r}
+```{r,echo=TRUE, results='hide'}
 here::i_am("dataVisualisation_analyses.Rmd")
 library(here)
 data <- read.csv(here("assignment_dataVis_dataset.csv")) 
 fig_path <- here("figures/") # path to save generated figures to
-op = 0 # flag if want to save output plots to files (1) or plot inline (0)
+op = 0 # saves plot inline (0) instead of in a file (1)
 ```
 
 # Summary Statistics
 
-*preliminary inspection of the file and properties of the data*
+*Preliminary inspection of the file and properties of the data*
 
 ```{r}
 print(summary(data))
@@ -36,7 +41,7 @@ head(data)
 
 ## *Sorting data by conditions*
 
-```{r}
+```{r, echo=TRUE, results='show'}
 df_list <- split(data, data$condition)
 
 df_condition1 <- df_list[["condition_1"]]
@@ -48,25 +53,25 @@ df_condition4 <- df_list[["condition_4"]]
 
 ## Condition 1 statistics
 
-```{r}
+```{r, echo=TRUE, results='show'}
 describe(df_condition1)
 ```
 
-## Condition 2
+## Condition 2 statistics
 
-```{r}
+```{r, echo=TRUE, results='show'}
 describe(df_condition2)
 ```
 
 ## Condition 3 statistics
 
-```{r}
+```{r, echo=TRUE, results='show'}
 describe(df_condition3)
 ```
 
 ## Condition 4 statistics
 
-```{r}
+```{r, echo=TRUE, results='show'}
 describe(df_condition4)
 ```
 
@@ -74,48 +79,115 @@ describe(df_condition4)
 
 ## Condition 1
 
-```{r}
-library(ggplot2)
-library(hrbrthemes)
+```{r, echo=TRUE, results='show'}
 condition1_plot <- ggplot(df_condition1, aes(x=x, y=y)) +
-  geom_point() +
-  geom_smooth(method=lm , color="red", fill="#69b3a2", se=TRUE) +
-  theme_ipsum()
+  geom_point(size=1, alpha=0.6, stroke=0.4) +
+  geom_smooth(method=lm , color="red", fill="#6699ff", se=TRUE) +
+    stat_poly_eq(aes(label = ..eq.label..), 
+    formula = y ~ x, 
+    label.x = max(df_condition1$x) * 0.5,  # Position near the right
+    label.y = max(df_condition1$y) * 0.9   # Position near the top
+  )+
+  theme_ipsum() +
+   labs(
+    title = "Condition 1",
+    subtitle = "Linear regression with confidence interval",
+    x = "X Variable Label",
+    y = "Y Variable Label"
+    )+
+  xlim(0,100)+ylim(0,100)
 condition1_plot
 ```
 
 ## Condition 2
 
-```{r}
+```{r, echo=TRUE, results='show'}
 condition2_plot <- ggplot(df_condition2, aes(x=x, y=y)) +
-  geom_point() +
-  geom_smooth(method=lm , color="red", fill="#69b3a2", se=TRUE) +
-  theme_ipsum()
+  geom_point(size=1, alpha=0.6, stroke=0.4) +
+  geom_smooth(method=lm , color="red", fill="#6699ff", se=TRUE) +
+    stat_poly_eq(aes(label = ..eq.label..), 
+    formula = y ~ x, 
+    label.x = max(df_condition2$x) * 0.5,  # Position near the right
+    label.y = max(df_condition2$y) * 0.9   # Position near the top
+  )+
+  theme_ipsum() +
+   labs(
+    title = "Condition 2",
+    subtitle = "Linear regression with confidence interval",
+    x = "X Variable Label",
+    y = "Y Variable Label"
+    )+
+  xlim(0,100)+ylim(0,100)
 condition2_plot
 ```
 
 ## Condition 3
 
-```{r}
+```{r, echo=TRUE, results='show'}
 condition3_plot <- ggplot(df_condition3, aes(x=x, y=y)) +
-  geom_point() +
-  geom_smooth(method=lm , color="red", fill="#69b3a2", se=TRUE) +
-  theme_ipsum()
+  geom_point(size=1, alpha=0.6, stroke=0.4) +
+  geom_smooth(method=lm , color="red", fill="#6699ff", se=TRUE) +
+    stat_poly_eq(aes(label = ..eq.label..), 
+    formula = y ~ x, 
+    label.x = max(df_condition3$x) * 0.5,  # Position near the right
+    label.y = max(df_condition3$y) * 0.9   # Position near the top
+  )+
+  theme_ipsum() +
+   labs(
+    title = "Condition 3",
+    subtitle = "Linear regression with confidence interval",
+    x = "X Variable Label",
+    y = "Y Variable Label"
+    )+
+  xlim(0,100)+ylim(0,100)
 condition3_plot
 ```
 
 ## Condition 4
 
-```{r}
+```{r, echo=TRUE, results='show'}
 condition4_plot <- ggplot(df_condition4, aes(x=x, y=y)) +
-  geom_point() +
-  geom_smooth(method=lm , color="red", fill="#69b3a2", se=TRUE) +
-  theme_ipsum()
+  geom_point(size=1, alpha=0.6, stroke=0.4) +
+  geom_smooth(method=lm , color="red", fill="#6699ff", se=TRUE) +
+    stat_poly_eq(aes(label = ..eq.label..), 
+    formula = y ~ x, 
+    label.x = max(df_condition4$x) * 0.5,  # Position near the right
+    label.y = max(df_condition4$y) * 0.9   # Position near the top
+  )+
+  theme_ipsum() +
+   labs(
+    title = "Condition 4",
+    subtitle = "Linear regression with confidence interval",
+    x = "X Variable Label",
+    y = "Y Variable Label"
+    )+
+  xlim(0,100)+ylim(0,100)
 condition4_plot
 ```
 
 # Reflection
+**What can be concluded from the dataset?**
 
-When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file).
+ - Even though the summary statistics, regression, and correlation coefficients are very similar (or even exactly the same) across the four conditions, the data distributions could be very different
+- And this dataset was probably created by someone artistic
 
-The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+**What did you find most challenging about this assignment?**
+
+I found it surprisingly challenging to get R to isolate each condition and operate on each condition separately. Mostly because I didn't know what kind of functions are available in R and what they do exactly. I first tried to convert the csv from long to wide, (and some other attempts I've forgotten) but then I couldn't separate x and y when doing summary statistics. 
+Eventually I figured out that i could define each condition as a separate dataframe and operate on them individually. 
+
+**What did you learn in completing this assignment? What are you still curious about?**
+
+ - Learned that R notebook is very powerful and fun
+- And how to find coding help with the Internet (and that it's okay to not know all they syntax of every language you use)
+
+
+- Curious about how to deal with more complex types of data using R, beyond numeric values
+- And maybe how the data analysis tools we have might limit our experimental design process
+  - e.g. working with language, text, video, doing thematic analysis, etc. 
+  
+**Why is it important to visualize data?**
+
+ - It's a MUCH easier way to communicate and share the results compared to text, and helps widen the audience of your research
+- Helps you inspect the shape and distribution of the data and detect any anomalous patterns or outliers
+- It's fun and it makes your report/paper more visually pleasing and readable :)
