@@ -1,2 +1,2 @@
 # zhangAmy
-Amy's repository in 3EE3 
+Amy's repository for the PNB 3EE3 course at McMaster University. 
