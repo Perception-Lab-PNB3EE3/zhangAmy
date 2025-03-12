@@ -35,7 +35,7 @@
   });
 
   // Assign a condition to the participant
-  const conditions = [1, 2];
+  const conditions = [1, 2, 3];
   var selected_cond = jsPsych.randomization.sampleWithReplacement(conditions, 1)[0];
 
   console.log("Assigned condition:", selected_cond);
@@ -48,19 +48,70 @@
 
 
 
-    // Define condition-based stimuli
-    var conditionTrials = {
-   1: [
-    { stimulus: "audioclip/C1T1.m4a" },
-    { stimulus: "audioclip/C1T2.m4a" },
-    { stimulus: "audioclip/C1T3.m4a" }
+// Define condition-based stimuli, questions, and choices
+var conditionTrials = {
+    1: [
+        { 
+            stimulus: "audioclip/C1T1.MP3", 
+            question: "When do most dreams occur?", 
+            choices: ["While awake", "During REM sleep", "During deep sleep","idk"], 
+            correct: 1 
+        },
+        { 
+            stimulus: "audioclip/C1T2.MP3", 
+            question: "According to this theory, what causes dreams?", 
+            choices: ["Memories from the past", "Brain creating order from random signals", "Thoughts we have while awake", "idk"], 
+            correct: 0
+        },
+        { 
+            stimulus: "audioclip/C1T3.MP3", 
+            question: "What is the one possible function of dreams?", 
+            choices: ["Make sleep shorte", "Stop people from waking up", "Practice handling threats", "idk"], 
+            correct: 2 
+        }
     ],
     2: [
-    { stimulus: "audioclip/C2T1.m4a" },
-    { stimulus: "audioclip/C2T2.m4a" },
-    { stimulus: "audioclip/C2T3.m4a" }
-    ], 
+        { 
+            stimulus: "audioclip/C2T1.MP3", 
+            question: "According to this theory, what causes dreams?", 
+            choices: ["Memories from the past", "Brain creating order from random signals", "Thoughts we have while awake", "idk"], 
+            correct: 1
+        },
+        { 
+            stimulus: "audioclip/C2T2.MP3", 
+            question: "What is the one possible function of dreams?", 
+            choices: ["Make sleep shorte", "Stop people from waking up", "Practice handling threats", "idk"], 
+            correct: 2 
+        },
+        { 
+            stimulus: "audioclip/C2T3.MP3", 
+            question: "How might dreams help with learning?", 
+            choices: [" By strengthening important memories", "By making people forget everything", "By keeping the brain awake all night", "idk"], 
+            correct: 0
+        }
+    ],
+    3: [
+        { 
+            stimulus: "audioclip/C3T1.MP3", 
+            question: "According to this theory, what causes dreams?", 
+            choices: ["Memories from the past", "Brain creating order from random signals", "Thoughts we have while awake", "idk"], 
+            correct: 1
+        },
+        { 
+            stimulus: "audioclip/C3T2.MP3", 
+            question: "How might dreams help with learning?", 
+            choices: [" By strengthening important memories", "By making people forget everything", "By keeping the brain awake all night", "idk"], 
+            correct: 0
+        },
+        { 
+            stimulus: "audioclip/C3T3.MP3", 
+            question: "What is one way dreams might be useful?", 
+            choices: [" Aiding deep sleep", "Making people sleep longer", "Helping solve problems", "Yellow"], 
+            correct: 2 
+        }
+    ]
     };
+
 
     // Select the correct set of stimuli for the assigned condition
     var selectedTrials = conditionTrials[selected_cond]; 
@@ -131,7 +182,8 @@ var consent = {
             <p>Thank you for choosing to participate.</p>
             <p>In the first section, you will listen to an audio clip of approximately 25 minutes.</p>
             <p>There will be some multiple choice questions throughout the clip to test your understanding of the material. </p>
-            <p>You must answer the question to resum listening.</p>
+            <p>You must answer the question to resume listening.</p>
+            <p>Please try to answer as quickly and as accurately as possible.</p>
             <p>If you are unsure of the answer, please choose the "idk" option.</p>
             <br> <!-- Empty line -->
             <p>Press "Continue" button to start listening.</p>
@@ -154,15 +206,16 @@ var consent = {
     // Second trial: Displays the buttons after audio has finished
     var response_trial_1 = {
       type: jsPsychHtmlButtonResponse,
-      stimulus: "<p>What is the answer?</p>",
-      choices: ["Answer", "Should be", "Obvious", "idk"],
-      data: { correct_response: 0 }, // first button
+      stimulus: `<p>${conditionTrials[selected_cond][0].question}</p>`,
+      choices: conditionTrials[selected_cond][0].choices,
+      data: { correct_response: conditionTrials[selected_cond][0].correct }, 
       on_finish: function (data) {
         totalTrials++; // Increment total trials
         data.correct = (data.response === data.correct_response) ? 1 : 0; // Store accuracy per trial
         if (data.correct) {
           totalCorrect++; // Increment correct count
         }
+        console.log("response feecback:", data.correct);
       }
     };
 
@@ -179,15 +232,17 @@ var consent = {
 
     var response_trial_2 = {
       type: jsPsychHtmlButtonResponse,
-      stimulus: "<p>What is the answer?</p>",
-      choices: ["Answer", "Should be", "Obvious", "idk"],
-      data: { correct_response: 1 }, // second button
+      type: jsPsychHtmlButtonResponse,
+      stimulus: `<p>${conditionTrials[selected_cond][1].question}</p>`,
+      choices: conditionTrials[selected_cond][1].choices,
+      data: { correct_response: conditionTrials[selected_cond][1].correct }, 
       on_finish: function (data) {
-        totalTrials++; 
-        data.correct = (data.response === data.correct_response) ? 1 : 0; 
+        totalTrials++; // Increment total trials
+        data.correct = (data.response === data.correct_response) ? 1 : 0; // Store accuracy per trial
         if (data.correct) {
-          totalCorrect++; 
+          totalCorrect++; // Increment correct count
         }
+        console.log("response feecback:", data.correct);
       }
     };
 
@@ -205,22 +260,24 @@ var consent = {
 
     var response_trial_3 = {
       type: jsPsychHtmlButtonResponse,
-      stimulus: "<p>What is the answer?</p>",
-      choices: ["Answer", "Should be", "Obvious", "idk"],
-      data: { correct_response: 2 }, // thrid button
+      type: jsPsychHtmlButtonResponse,
+      stimulus: `<p>${conditionTrials[selected_cond][2].question}</p>`,
+      choices: conditionTrials[selected_cond][2].choices,
+      data: { correct_response: conditionTrials[selected_cond][2].correct }, 
       on_finish: function (data) {
-        totalTrials++; 
-        data.correct = (data.response === data.correct_response) ? 1 : 0; 
+        totalTrials++; // Increment total trials
+        data.correct = (data.response === data.correct_response) ? 1 : 0; // Store accuracy per trial
         if (data.correct) {
-          totalCorrect++; 
+          totalCorrect++; // Increment correct count
         }
+        console.log("response feecback:", data.correct);
       }
     };
 
   timeline.push(audio_trial_3, response_trial_3); 
 
 
-  /* Instruction page for questionnaire*/
+  /* Instruction page for questionnaire */
   var ques_instructions = {
         type: jsPsychHtmlButtonResponse,
         stimulus: `
@@ -230,8 +287,8 @@ var consent = {
         `,
         choices: ['Continue'],
     };
-
   timeline.push(ques_instructions);
+
 
   /* End of experiment questionnaire*/
     var likert_scale = [
@@ -259,6 +316,7 @@ var consent = {
 
   timeline.push(questionnaire_trial)
 
+
   /* Thank you page */
   var thankyou = {
   type: jsPsychHtmlKeyboardResponse,
@@ -272,6 +330,7 @@ var consent = {
   };
 
   timeline.push(thankyou);
+
     
 jsPsych.run(timeline);
   </script>
