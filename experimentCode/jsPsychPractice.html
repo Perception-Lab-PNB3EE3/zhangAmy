@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Speed Listening Experiemnt</title>
+    <script src="jspsych/jspsych.js"></script>
+    <script src="jspsych/plugin-html-keyboard-response.js"></script>
+    <script src="jspsych/plugin-html-button-response.js"></script>
+    <script src="jspsych/plugin-survey-html-form.js"></script>
+    <script src="jspsych/plugin-audio-button-response.js"></script>
+    <script src="jspsych/plugin-image-keyboard-response.js"></script>
+    <script src="jspsych/plugin-survey-likert.js"></script>
+    <script src="jspsych/plugin-preload.js"></script>
+    <link href="jspsych/jspsych.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body></body>
+
+  <script>
+  /* Initialize jsPsych as an instance (v7+) */
+    /*initialize jsPsych*/
+    var jsPsych = initJsPsych({
+      on_finish: function () {
+      var accuracy = (totalTrials > 0) ? (totalCorrect / totalTrials) * 100 : 0; // Avoid division by zero
+
+      // Add accuracy globally
+      jsPsych.data.addProperties({
+        overall_accuracy: accuracy.toFixed(2)
+      });
+
+      // Generate a filename based on condition
+      var filename = `experiment_data_condition_${selected_cond}.csv`;
+
+      // Save CSV file
+      jsPsych.data.get().localSave('csv', filename);
+    }
+  });
+
+  // Assign a condition to the participant
+  const conditions = [1, 2];
+  var selected_cond = jsPsych.randomization.sampleWithReplacement(conditions, 1)[0];
+
+  console.log("Assigned condition:", selected_cond);
+
+  // Store condition in the dataset
+  jsPsych.data.addProperties({ condition: selected_cond });
+
+    /*create timeline*/
+    var timeline = [];
+
+
+
+    // Define condition-based stimuli
+    var conditionTrials = {
+   1: [
+    { stimulus: "audioclip/C1T1.m4a" },
+    { stimulus: "audioclip/C1T2.m4a" },
+    { stimulus: "audioclip/C1T3.m4a" }
+    ],
+    2: [
+    { stimulus: "audioclip/C2T1.m4a" },
+    { stimulus: "audioclip/C2T2.m4a" },
+    { stimulus: "audioclip/C2T3.m4a" }
+    ], 
+    };
+
+    // Select the correct set of stimuli for the assigned condition
+    var selectedTrials = conditionTrials[selected_cond]; 
+
+    //create trial conunt and accuracy acount
+    var totalCorrect = 0;
+    var totalTrials = 0;
+    
+    //pre load
+    var preload = {
+    type: jsPsychPreload,
+    auto_preload: true
+    }
+
+  timeline.push(preload);
+
+  /*define welcome message trial*/
+    var welcome = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: `
+            <p>Welcome to the experiment. </p>
+            <p>Please find a quiet place or have a pair of headphones ready. </p>
+            <p>When you are ready, press the "Continue" button to begin.</p>`,
+        choices: ['Continue'],
+    };
+    timeline.push(welcome);
+
+ /*create consent page */
+/*create consent page */
+var consent = {
+      type: jsPsychSurveyHtmlForm,
+        preamble: '<b>Consent Form</b>',
+        html: `
+          <br> <!-- Empty line -->
+          <p>This is a pilot study and has <b>not</b> obstained ethics approval.</p> 
+          <p>The purpose of the experiment is to learn more about the impact of audio speed on people's listening habits and information retention.</p> 
+          <p>In the first section of the experiment, you will hear audio clips delivering information about (natural science).</p> 
+          <p>In the second section of the experiment, you will be asked to rate aspects of you experiences about this study.</p>
+          <p>The entire study takes about 39 miuntes to complete. </p>
+          <br> <!-- Empty line -->
+          <p>By clicking the consent box blow, you agree to participate in the study and allow experimenters to collect anonymous data about your responses.</p>
+          <input type="checkbox" id="consent-checkbox" name="consent"> 
+           <label for="consent-checkbox"> I agree to participate <span style="color: red;">*</span></label>`,
+          button_label: "Continue",
+  on_load: function () {
+    setTimeout(() => {
+      let button = document.querySelector("input[type='submit']"); // Find correct button
+      if (button) {
+        button.disabled = true; // Disable initially
+
+        document.getElementById("consent-checkbox").addEventListener("change", function () {
+          button.disabled = !this.checked; // Enable only when checked
+        });
+      } else {
+        console.error("Button not found!");
+          }
+        }, 50); // Short delay to ensure button is available
+      }
+    };
+
+  timeline.push(consent);
+
+
+ /*define trial instructions*/
+    var instructions = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: `
+            <p>Thank you for choosing to participate.</p>
+            <p>In the first section, you will listen to an audio clip of approximately 25 minutes.</p>
+            <p>There will be some multiple choice questions throughout the clip to test your understanding of the material. </p>
+            <p>You must answer the question to resum listening.</p>
+            <p>If you are unsure of the answer, please choose the "idk" option.</p>
+            <br> <!-- Empty line -->
+            <p>Press "Continue" button to start listening.</p>
+        `,
+        choices: ['Continue'],
+    };
+    /*add the instruction to the timeline*/
+  timeline.push(instructions);
+    
+ /*define test trials*/
+    // First trial: Plays the audio WITHOUT buttons
+    var audio_trial_1 = {
+      type: jsPsychAudioButtonResponse,
+      stimulus: conditionTrials[selected_cond][0].stimulus, // First (3) min of the clip
+      choices: [], // No buttons
+      response_allowed_while_playing: false, // Prevent interaction
+      trial_ends_after_audio: true // Automatically move to next trial when audio ends
+    };
+
+    // Second trial: Displays the buttons after audio has finished
+    var response_trial_1 = {
+      type: jsPsychHtmlButtonResponse,
+      stimulus: "<p>What is the answer?</p>",
+      choices: ["Answer", "Should be", "Obvious", "idk"],
+      data: { correct_response: 0 }, // first button
+      on_finish: function (data) {
+        totalTrials++; // Increment total trials
+        data.correct = (data.response === data.correct_response) ? 1 : 0; // Store accuracy per trial
+        if (data.correct) {
+          totalCorrect++; // Increment correct count
+        }
+      }
+    };
+
+  timeline.push(audio_trial_1, response_trial_1); 
+
+    //Trial 2
+    var audio_trial_2 = {
+      type: jsPsychAudioButtonResponse,
+      stimulus: conditionTrials[selected_cond][1].stimulus, // Second (3) min of the clip
+      choices: [], 
+      response_allowed_while_playing: false, 
+      trial_ends_after_audio: true
+    };
+
+    var response_trial_2 = {
+      type: jsPsychHtmlButtonResponse,
+      stimulus: "<p>What is the answer?</p>",
+      choices: ["Answer", "Should be", "Obvious", "idk"],
+      data: { correct_response: 1 }, // second button
+      on_finish: function (data) {
+        totalTrials++; 
+        data.correct = (data.response === data.correct_response) ? 1 : 0; 
+        if (data.correct) {
+          totalCorrect++; 
+        }
+      }
+    };
+
+  timeline.push(audio_trial_2, response_trial_2); 
+
+
+    //Trial 3
+    var audio_trial_3 = {
+      type: jsPsychAudioButtonResponse,
+      stimulus: conditionTrials[selected_cond][2].stimulus, // Thrid (3) min of the clip
+      choices: [], 
+      response_allowed_while_playing: false, 
+      trial_ends_after_audio: true
+    };
+
+    var response_trial_3 = {
+      type: jsPsychHtmlButtonResponse,
+      stimulus: "<p>What is the answer?</p>",
+      choices: ["Answer", "Should be", "Obvious", "idk"],
+      data: { correct_response: 2 }, // thrid button
+      on_finish: function (data) {
+        totalTrials++; 
+        data.correct = (data.response === data.correct_response) ? 1 : 0; 
+        if (data.correct) {
+          totalCorrect++; 
+        }
+      }
+    };
+
+  timeline.push(audio_trial_3, response_trial_3); 
+
+
+  /* Instruction page for questionnaire*/
+  var ques_instructions = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: `
+            <p>You have compeleted the first section of the experiment. Thank you. </p>
+            <p>The next section will ask you to rate some of your experiences regarding the previous section and speed listening in general </p>
+            <p>When you are ready, press "Continue" button to proceed.</p>
+        `,
+        choices: ['Continue'],
+    };
+
+  timeline.push(ques_instructions);
+
+  /* End of experiment questionnaire*/
+    var likert_scale = [
+    "Strongly Disagree", 
+    "Disagree", 
+    "Slightly Disagree",
+    "Slightly Agree",
+    "Agree", 
+    "Strongly Agree"
+    ];
+
+    var questionnaire_trial = {
+    type: jsPsychSurveyLikert,
+    preamble: "<h2>On a seven-point scale, how much do you agree with the following statements?</h2>", 
+    questions: [
+        {prompt: "I know the material well before participating in the study.", name: 'knowledge', labels: likert_scale, required: true},
+        {prompt: "I enjoyed the material presented in the audio clip.", name: 'interest', labels: likert_scale, required: true},
+        {prompt: "My attention was always foscued when listening to the clip.", name: 'attention', labels: likert_scale, required: true},
+        {prompt: "I retained the information in the clip very well.", name: 'retention', labels: likert_scale, required: true},
+        {prompt: "The speed of the audio clip was difficult to follow.", name: 'difficulty', labels: likert_scale, required: true},
+        {prompt: "I often use speed listening in my daily life.", name: 'Frequency', labels: likert_scale, required: true},
+    ],
+    randomize_question_order: false
+    };
+
+  timeline.push(questionnaire_trial)
+
+  /* Thank you page */
+  var thankyou = {
+  type: jsPsychHtmlKeyboardResponse,
+  stimulus: function () {
+  var accuracy = (totalCorrect / totalTrials) * 100;
+    return `<p>You have compeleted the entire experiment. </p>
+            <p>Thank you. </p>
+            <p>Your accuracy on the questions: ${accuracy.toFixed(1)}%</p>
+            <p>Press any key to end the experiment.</p>`;
+    }
+  };
+
+  timeline.push(thankyou);
+    
+jsPsych.run(timeline);
+  </script>
+  </html>
