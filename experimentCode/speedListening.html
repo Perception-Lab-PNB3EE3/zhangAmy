@@ -35,7 +35,7 @@
   });
 
   // Assign a condition to the participant
-  const conditions = [1, 2, 3];
+  const conditions = [1, 2, 3,4];
   var selected_cond = jsPsych.randomization.sampleWithReplacement(conditions, 1)[0];
 
   console.log("Assigned condition:", selected_cond);
@@ -52,63 +52,167 @@
 var conditionTrials = {
     1: [
         { 
+            stimulus: "audioclip/practice_trial.MP3", 
+        },
+        { 
             stimulus: "audioclip/C1T1.MP3", 
-            question: "When do most dreams occur?", 
-            choices: ["While awake", "During REM sleep", "During deep sleep","idk"], 
+            question: "Which of the following is not connected to dream?", 
+            choices: ["Nerotransimtters", "Physical exertion", "Sleep cycles","idk"], 
             correct: 1 
         },
         { 
             stimulus: "audioclip/C1T2.MP3", 
-            question: "According to this theory, what causes dreams?", 
-            choices: ["Memories from the past", "Brain creating order from random signals", "Thoughts we have while awake", "idk"], 
+            question: "What is the function of the pons in the brain stem?", 
+            choices: ["Sleep paralysis", "Sensory input", "Initiate sleep", "idk"], 
             correct: 0
         },
         { 
             stimulus: "audioclip/C1T3.MP3", 
-            question: "What is the one possible function of dreams?", 
-            choices: ["Make sleep shorte", "Stop people from waking up", "Practice handling threats", "idk"], 
+            question: "How is frontal lobe activity during sleep and dream?", 
+            choices: ["Same as awake", "Becomes more active", "Becomes less active", "idk"], 
             correct: 2 
+        },
+        { 
+            stimulus: "audioclip/C1T4.MP3", 
+            question: "According to this theory, what causes dreams?", 
+            choices: ["Memories from the past", "Brain creating order from random signals", "Thoughts we have while awake", "idk"], 
+            correct: 1
+        }, 
+        { 
+            stimulus: "audioclip/C1T5.MP3", 
+            question: "Which of the following doesn't relate to dream?", 
+            choices: ["Emotional processing", "Problem solving", "Physical recovery", "idk"], 
+            correct: 2 
+        },
+        { 
+            stimulus: "audioclip/C1T6.MP3", 
+            question: "What is the best time to study in order to remember more?", 
+            choices: ["Before sleeping", "After waking up", "Time doesn't matter", "idk"], 
+            correct: 0 
         }
     ],
     2: [
         { 
+            stimulus: "audioclip/practice_trial_2.MP3", 
+        },
+        { 
             stimulus: "audioclip/C2T1.MP3", 
-            question: "According to this theory, what causes dreams?", 
-            choices: ["Memories from the past", "Brain creating order from random signals", "Thoughts we have while awake", "idk"], 
+            question: "What is the function of sleep spindles?", 
+            choices: ["Initiate dream", "Consolidate memory", "Prevent waking", "idk"], 
             correct: 1
         },
         { 
             stimulus: "audioclip/C2T2.MP3", 
-            question: "What is the one possible function of dreams?", 
-            choices: ["Make sleep shorte", "Stop people from waking up", "Practice handling threats", "idk"], 
+            question: "How is frontal lobe activity during sleep and dream?", 
+            choices: ["Same as awake", "Becomes more active", "Becomes less active", "idk"], 
             correct: 2 
         },
         { 
             stimulus: "audioclip/C2T3.MP3", 
-            question: "How might dreams help with learning?", 
-            choices: [" By strengthening important memories", "By making people forget everything", "By keeping the brain awake all night", "idk"], 
+            question: "What is one function of dream just discussed in the audio", 
+            choices: ["Process memory", "Develop creativity", "Dream has no function", "idk"], 
             correct: 0
-        }
+        },
+        { 
+            stimulus: "audioclip/C2T4.MP3", 
+            question: "What do researchers study about sleep and dreams?", 
+            choices: ["Different content of dream", "Different sleep stages", "Different brain structures", "idk"], 
+            correct: 1
+        },
+        { 
+            stimulus: "audioclip/C2T5.MP3", 
+            question: "How does dream influence precesses of stressful emotions?", 
+            choices: ["Promote emotional healing", "Helping us forget", "Repressing the emotions", "idk"], 
+            correct: 0
+        },
+        { 
+            stimulus: "audioclip/C2T6.MP3", 
+            question: "What is the technique used by Salvador Dalí, the painter?", 
+            choices: ["Spontaneous waking", "REM-focused sleep", "hypnagogic napping", "idk"], 
+            correct: 2
+        },
     ],
     3: [
         { 
+            stimulus: "audioclip/practice_trial_3.MP3", 
+        },
+        { 
             stimulus: "audioclip/C3T1.MP3", 
-            question: "According to this theory, what causes dreams?", 
-            choices: ["Memories from the past", "Brain creating order from random signals", "Thoughts we have while awake", "idk"], 
+            question: "When do most dreams occur??", 
+            choices: ["During NREM sleep", "During REM sleep", "During deep sleep", "idk"], 
             correct: 1
         },
         { 
             stimulus: "audioclip/C3T2.MP3", 
-            question: "How might dreams help with learning?", 
-            choices: [" By strengthening important memories", "By making people forget everything", "By keeping the brain awake all night", "idk"], 
-            correct: 0
+            question: "Which neurotransmitter contributes to the eye movement during dreams?", 
+            choices: [" Dopamine", "Acetylcholine", "Epinephrine", "idk"], 
+            correct: 1
         },
         { 
             stimulus: "audioclip/C3T3.MP3", 
-            question: "What is one way dreams might be useful?", 
-            choices: [" Aiding deep sleep", "Making people sleep longer", "Helping solve problems", "Yellow"], 
+            question: "What is one possible function of dreams?", 
+            choices: ["Stop people from waking up", "Making people sleep longer", "Practicing handling threats", "idk"], 
             correct: 2 
+        },
+        { 
+            stimulus: "audioclip/C3T4.MP3", 
+            question: "What is the best time to study in order to remember more?", 
+            choices: ["Before sleeping", "After waking up", "Time doesn't matter", "idk"], 
+            correct: 0 
+        },
+        { 
+            stimulus: "audioclip/C3T5.MP3", 
+            question: "Which scientific discovery was aided by sleep and dream", 
+            choices: ["Molecular bonds", "The periodic table", "Structure of benzene", "idk"], 
+            correct: 2 
+        },
+        { 
+            stimulus: "audioclip/C3T6.MP3", 
+            question: "People who remember their dreams seems to be better at which task?", 
+            choices: ["Avoiding heuristics", "Divergent thinking", "Logical reasoning", "idk"], 
+            correct: 1 
         }
+    ], 
+    4: [
+        { 
+            stimulus: "audioclip/practice_trial_4.MP3", 
+        },
+        { 
+          stimulus: "audioclip/C4T1.MP3", 
+            question: "When do most dreams occur??", 
+            choices: ["During NREM sleep", "During REM sleep", "During deep sleep", "idk"], 
+            correct: 1
+        },
+        { 
+            stimulus: "audioclip/C4T2.MP3", 
+            question: "Which neurotransmitter contributes to the emotional intensity during dreams?", 
+            choices: [" Dopamine", "Serotonin", "Epinephrine", "idk"], 
+            correct: 0
+        },
+        { 
+            stimulus: "audioclip/C4T3.MP3", 
+            question: "What do researchers study about sleep and dreams?", 
+            choices: ["Different content of dream", "Different sleep stages", "Different brain structures", "idk"], 
+            correct: 1
+        }, 
+        { 
+            stimulus: "audioclip/C4T4.MP3", 
+            question: "How do dreams help emotional processing?", 
+            choices: ["Repeated exposure to emotions", "Suppress unwanted emotions", "Reduce intensity of emotions", "idk"], 
+            correct: 2
+        }, 
+        { 
+            stimulus: "audioclip/C4T5.MP3", 
+            question: "What was the task described in the previous experiment?", 
+            choices: ["Word puzzel", "Math problem", "Route memory", "idk"], 
+            correct: 0
+        }, 
+        { 
+            stimulus: "audioclip/C4T6.MP3", 
+            question: "According to this theory, what causes dreams?", 
+            choices: ["Memories from the past", "Brain creating order from random signals", "Thoughts we have while awake", "idk"], 
+            correct: 1
+        }, 
     ]
     };
 
@@ -145,12 +249,14 @@ var consent = {
       type: jsPsychSurveyHtmlForm,
         preamble: '<b>Consent Form</b>',
         html: `
+          <p>This is a pilot study and has <b>not</b> obtained ethics approval.</p> 
           <br> <!-- Empty line -->
-          <p>This is a pilot study and has <b>not</b> obstained ethics approval.</p> 
-          <p>The purpose of the experiment is to learn more about the impact of audio speed on people's listening habits and information retention.</p> 
-          <p>In the first section of the experiment, you will hear audio clips delivering information about (natural science).</p> 
+          <p>You must have normal or correct-to-normal vision and hearing to participate in this study.</p>
+          <br> <!-- Empty line -->
+          <p>The purpose of the experiment is to learn more about the impact of audio speed on people's listening habits.</p> 
+          <p>In the first section of the experiment, you will hear audio clips delivering information about natural science.</p> 
           <p>In the second section of the experiment, you will be asked to rate aspects of you experiences about this study.</p>
-          <p>The entire study takes about 39 miuntes to complete. </p>
+          <p>The entire study takes about 30 miuntes to complete. </p>
           <br> <!-- Empty line -->
           <p>By clicking the consent box blow, you agree to participate in the study and allow experimenters to collect anonymous data about your responses.</p>
           <input type="checkbox" id="consent-checkbox" name="consent"> 
@@ -179,69 +285,118 @@ var consent = {
     var instructions = {
         type: jsPsychHtmlButtonResponse,
         stimulus: `
-            <p>Thank you for choosing to participate.</p>
-            <p>In the first section, you will listen to an audio clip of approximately 25 minutes.</p>
+            <p>Thank you for choosing to participate :D</p>
+            <p>In the first section, you will listen to an audio clip of approximately 10 minutes.</p>
             <p>There will be some multiple choice questions throughout the clip to test your understanding of the material. </p>
             <p>You must answer the question to resume listening.</p>
             <p>Please try to answer as quickly and as accurately as possible.</p>
             <p>If you are unsure of the answer, please choose the "idk" option.</p>
             <br> <!-- Empty line -->
+            <p>There will be a short practice trial.</p>
             <p>Press "Continue" button to start listening.</p>
         `,
         choices: ['Continue'],
     };
     /*add the instruction to the timeline*/
   timeline.push(instructions);
+
+  // Define the practice audio trial
+  var practice_audio = {
+    type: jsPsychAudioButtonResponse,
+    stimulus: conditionTrials[selected_cond][0].stimulus, 
+    choices: [], // No buttons while playing
+    response_allowed_while_playing: false,
+    trial_ends_after_audio: true // Move to the next trial automatically when audio ends
+  };
+
+// Define the practice response trial
+  var practice_response = {
+    type: jsPsychHtmlButtonResponse,
+    stimulus: `<p>Are you ready to move on the the experiment?</p>
+               <p>Click "Yes" to proceed.</p>
+               <p>Click "No" to repeat the practice trial.</p>`,
+    choices: ["Yes", "No"],
+    on_finish: function(data) {
+    jsPsych.data.addProperties({ practice_understood: data.response }); // Store response
+    }
+  };
+
+  // Loop the practice trial until they choose "Yes"
+  var practice_loop = {
+    timeline: [practice_audio, practice_response],
+    loop_function: function(data) {
+      var last_response = data.values().slice(-1)[0].response; // Get last response
+      return last_response === 1; // If "No" (index 1), repeat practice
+    }
+  };
+
+  // Add practice loop to the timeline
+timeline.push(practice_loop);
+
+// Add to timeline
+// timeline.push(practice_audio, practice_response);
+
     
  /*define test trials*/
     // First trial: Plays the audio WITHOUT buttons
     var audio_trial_1 = {
       type: jsPsychAudioButtonResponse,
-      stimulus: conditionTrials[selected_cond][0].stimulus, // First (3) min of the clip
+      stimulus: conditionTrials[selected_cond][1].stimulus, // First (3) min of the clip
       choices: [], // No buttons
       response_allowed_while_playing: false, // Prevent interaction
-      trial_ends_after_audio: true // Automatically move to next trial when audio ends
+      trial_ends_after_audio: true, // Automatically move to next trial when audio ends
+      data: { trial_name: "audio_trial_1" }
     };
 
     // Second trial: Displays the buttons after audio has finished
     var response_trial_1 = {
       type: jsPsychHtmlButtonResponse,
-      stimulus: `<p>${conditionTrials[selected_cond][0].question}</p>`,
-      choices: conditionTrials[selected_cond][0].choices,
-      data: { correct_response: conditionTrials[selected_cond][0].correct }, 
+      stimulus: `<p>${conditionTrials[selected_cond][1].question}</p>`,
+      choices: conditionTrials[selected_cond][1].choices,
+      data: { 
+        trial_name: "response_trial_1",
+        trial_number: 1,
+        correct_response: conditionTrials[selected_cond][1].correct }, 
       on_finish: function (data) {
         totalTrials++; // Increment total trials
         data.correct = (data.response === data.correct_response) ? 1 : 0; // Store accuracy per trial
         if (data.correct) {
           totalCorrect++; // Increment correct count
-        }
+        };
+        data.wrong_trial = data.correct ? "" : data.trial_number.toString();   // Store trial number if incorrect, otherwise leave blank
+
         console.log("response feecback:", data.correct);
-      }
-    };
+        }
+      };
 
   timeline.push(audio_trial_1, response_trial_1); 
 
     //Trial 2
     var audio_trial_2 = {
       type: jsPsychAudioButtonResponse,
-      stimulus: conditionTrials[selected_cond][1].stimulus, // Second (3) min of the clip
+      stimulus: conditionTrials[selected_cond][2].stimulus, // Second (3) min of the clip
       choices: [], 
       response_allowed_while_playing: false, 
-      trial_ends_after_audio: true
+      trial_ends_after_audio: true,
+      data: { trial_name: "audio_trial_2" }
     };
 
     var response_trial_2 = {
       type: jsPsychHtmlButtonResponse,
       type: jsPsychHtmlButtonResponse,
-      stimulus: `<p>${conditionTrials[selected_cond][1].question}</p>`,
-      choices: conditionTrials[selected_cond][1].choices,
-      data: { correct_response: conditionTrials[selected_cond][1].correct }, 
+      stimulus: `<p>${conditionTrials[selected_cond][2].question}</p>`,
+      choices: conditionTrials[selected_cond][2].choices,
+      data: { 
+        trial_name: "response_trial_2",
+        trial_number: 2,
+        correct_response: conditionTrials[selected_cond][2].correct }, 
       on_finish: function (data) {
         totalTrials++; // Increment total trials
         data.correct = (data.response === data.correct_response) ? 1 : 0; // Store accuracy per trial
         if (data.correct) {
           totalCorrect++; // Increment correct count
-        }
+        };
+        data.wrong_trial = data.correct ? "" : data.trial_number.toString();   // Store trial number if incorrect, otherwise leave blank
         console.log("response feecback:", data.correct);
       }
     };
@@ -252,30 +407,130 @@ var consent = {
     //Trial 3
     var audio_trial_3 = {
       type: jsPsychAudioButtonResponse,
-      stimulus: conditionTrials[selected_cond][2].stimulus, // Thrid (3) min of the clip
+      stimulus: conditionTrials[selected_cond][3].stimulus, // Thrid (3) min of the clip
       choices: [], 
       response_allowed_while_playing: false, 
-      trial_ends_after_audio: true
+      trial_ends_after_audio: true,
+      data: { trial_name: "audio_trial_3" }
     };
 
     var response_trial_3 = {
       type: jsPsychHtmlButtonResponse,
       type: jsPsychHtmlButtonResponse,
-      stimulus: `<p>${conditionTrials[selected_cond][2].question}</p>`,
-      choices: conditionTrials[selected_cond][2].choices,
-      data: { correct_response: conditionTrials[selected_cond][2].correct }, 
+      stimulus: `<p>${conditionTrials[selected_cond][3].question}</p>`,
+      choices: conditionTrials[selected_cond][3].choices,
+      data: { 
+        trial_name: "response_trial_3",
+        trial_number: 3,
+        correct_response: conditionTrials[selected_cond][3].correct }, 
       on_finish: function (data) {
         totalTrials++; // Increment total trials
         data.correct = (data.response === data.correct_response) ? 1 : 0; // Store accuracy per trial
         if (data.correct) {
           totalCorrect++; // Increment correct count
-        }
+        };
+        data.wrong_trial = data.correct ? "" : data.trial_number.toString();   // Store trial number if incorrect, otherwise leave blank
         console.log("response feecback:", data.correct);
       }
     };
 
   timeline.push(audio_trial_3, response_trial_3); 
 
+      //Trial 4
+      var audio_trial_4 = {
+      type: jsPsychAudioButtonResponse,
+      stimulus: conditionTrials[selected_cond][4].stimulus, // Thrid (3) min of the clip
+      choices: [], 
+      response_allowed_while_playing: false, 
+      trial_ends_after_audio: true,
+      data: { trial_name: "audio_trial_4" }
+    };
+
+    var response_trial_4 = {
+      type: jsPsychHtmlButtonResponse,
+      type: jsPsychHtmlButtonResponse,
+      stimulus: `<p>${conditionTrials[selected_cond][4].question}</p>`,
+      choices: conditionTrials[selected_cond][4].choices,
+      data: { 
+        trial_name: "response_trial_4",
+        trial_number: 4,
+        correct_response: conditionTrials[selected_cond][4].correct }, 
+      on_finish: function (data) {
+        totalTrials++; // Increment total trials
+        data.correct = (data.response === data.correct_response) ? 1 : 0; // Store accuracy per trial
+        if (data.correct) {
+          totalCorrect++; // Increment correct count
+        };
+        data.wrong_trial = data.correct ? "" : data.trial_number.toString();   // Store trial number if incorrect, otherwise leave blank
+        console.log("response feecback:", data.correct);
+      }
+    };
+
+  timeline.push(audio_trial_4, response_trial_4); 
+       
+  //Trial 5
+       var audio_trial_5 = {
+      type: jsPsychAudioButtonResponse,
+      stimulus: conditionTrials[selected_cond][5].stimulus, // Thrid (3) min of the clip
+      choices: [], 
+      response_allowed_while_playing: false, 
+      trial_ends_after_audio: true,
+      data: { trial_name: "audio_trial_4" }
+    };
+
+    var response_trial_5 = {
+      type: jsPsychHtmlButtonResponse,
+      type: jsPsychHtmlButtonResponse,
+      stimulus: `<p>${conditionTrials[selected_cond][5].question}</p>`,
+      choices: conditionTrials[selected_cond][5].choices,
+      data: { 
+        trial_name: "response_trial_5",
+        trial_number: 5,
+        correct_response: conditionTrials[selected_cond][5].correct }, 
+      on_finish: function (data) {
+        totalTrials++; // Increment total trials
+        data.correct = (data.response === data.correct_response) ? 1 : 0; // Store accuracy per trial
+        if (data.correct) {
+          totalCorrect++; // Increment correct count
+        };
+        data.wrong_trial = data.correct ? "" : data.trial_number.toString();   // Store trial number if incorrect, otherwise leave blank
+        console.log("response feecback:", data.correct);
+      }
+    };
+
+  timeline.push(audio_trial_5, response_trial_5);  
+  
+      //Trial 6
+      var audio_trial_6 = {
+      type: jsPsychAudioButtonResponse,
+      stimulus: conditionTrials[selected_cond][6].stimulus, // Thrid (3) min of the clip
+      choices: [], 
+      response_allowed_while_playing: false, 
+      trial_ends_after_audio: true,
+      data: { trial_name: "audio_trial_6" }
+    };
+
+    var response_trial_6 = {
+      type: jsPsychHtmlButtonResponse,
+      type: jsPsychHtmlButtonResponse,
+      stimulus: `<p>${conditionTrials[selected_cond][6].question}</p>`,
+      choices: conditionTrials[selected_cond][6].choices,
+      data: { 
+        trial_name: "response_trial_6",
+        trial_number: 6,
+        correct_response: conditionTrials[selected_cond][6].correct }, 
+      on_finish: function (data) {
+        totalTrials++; // Increment total trials
+        data.correct = (data.response === data.correct_response) ? 1 : 0; // Store accuracy per trial
+        if (data.correct) {
+          totalCorrect++; // Increment correct count
+        };
+        data.wrong_trial = data.correct ? "" : data.trial_number.toString();   // Store trial number if incorrect, otherwise leave blank
+        console.log("response feecback:", data.correct);
+      }
+    };
+
+  timeline.push(audio_trial_6, response_trial_6); 
 
   /* Instruction page for questionnaire */
   var ques_instructions = {
@@ -311,7 +566,11 @@ var consent = {
         {prompt: "The speed of the audio clip was difficult to follow.", name: 'difficulty', labels: likert_scale, required: true},
         {prompt: "I often use speed listening in my daily life.", name: 'Frequency', labels: likert_scale, required: true},
     ],
-    randomize_question_order: false
+    randomize_question_order: false,
+    on_finish: function(data) {
+    // Extract responses and save each as a separate column
+    jsPsych.data.addProperties(data.response);
+      }
     };
 
   timeline.push(questionnaire_trial)
@@ -325,7 +584,7 @@ var consent = {
     return `<p>You have compeleted the entire experiment. </p>
             <p>Thank you. </p>
             <p>Your accuracy on the questions: ${accuracy.toFixed(1)}%</p>
-            <p>Press any key to end the experiment.</p>`;
+            <p><b>Press any key to end the experiment.</b></p>`;
     }
   };
 
