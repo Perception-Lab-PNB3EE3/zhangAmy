@@ -1,0 +1,570 @@
+---
+title: "Data (Simulation and) Analysis for Speed Listening Experiment"
+output: html_notebook
+author: Amy Zhang
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+## Install and Load Packages
+
+```{r}
+install.packages(c("tidyverse", "afex", "emmeans", "ggpubr","PMCMRplus","ggsignif"))
+library(ggplot2)
+library(tidyverse)
+library(tidyr)
+library(afex)   
+library(emmeans)  
+library(ggpubr)   
+library(ggsignif)
+library(car)
+library(PMCMRplus)
+library(effectsize)
+library(hrbrthemes)
+```
+
+# Data Simulation
+
+### Experiment parameters and responses
+
+Setting experimental parameters for the dataframe, with 4 experimental
+conditions, 6 trials, and 92 participants.
+
+Response are participants' performance on each of the 6 trials, with
+"correct response" represented by "1" and "incorrect response"
+represented by "0". Accuracy is calculated based on each participant's
+responses across 6 trials.
+
+```{r}
+set.seed(123)  # For reproducibility
+
+nSample <- 92  #total number of participants
+nCond <- 4  
+cond_names <- c("1.0x", "1.5x", "1.7x", "2.0x")  
+nTrials <- 6  
+accuracyRate <- 0.85  # Target overall accuracy, should be high since questions were simple
+
+# Generate balanced condition assignments
+balanced_conditions <- sample(rep(cond_names, each = nSample / nCond))
+
+# Generate random responses with ~85% accuracy
+responses <- matrix(rbinom(nSample * nTrials, size = 1, prob = accuracyRate),
+                    nrow = nSample, ncol = nTrials)
+
+# Calculate individual accuracy 
+individual_accuracy <- rowMeans(responses)
+
+```
+
+### Generate reaction time data
+
+Reaction times by conditions are generated as a normal distributions
+with different means, standard deviations, and variations by trial
+number.
+
+Results are expected to be significant for main effect of conditions and
+trials.
+
+```{r}
+# Define reaction time distributions for each condition & trial
+generate_rt <- function(condition, trial) {
+  if (condition == "1.0x") {
+    return(rnorm(1, mean = 4500 + (trial * 10), sd = 1000))  
+  } else if (condition == "1.5x") {
+    return(rnorm(1, mean = 5000 + (trial * 30), sd = 1000))
+  } else if (condition == "1.7x") {
+    return(rnorm(1, mean = 5700 + (trial * 75), sd = 1000))  
+  } else if (condition == "2.0x") {
+    return(rnorm(1, mean = 6000 + (trial * 145), sd = 1000))  
+  }
+}   #rt increases as speed levels increase, and as trial numbers increase.
+    #the increase should be more obvious in higher speed conditions
+
+
+# Generate reaction time data
+reaction_times <- matrix(nrow = nSample, ncol = nTrials)
+for (i in 1:nSample) {
+  for (j in 1:nTrials) {
+    reaction_times[i, j] <- generate_rt(balanced_conditions[i], j)
+  }
+}
+```
+
+### Generate Likert scale response
+
+Likert responses for survey questions at the end of experiment. All
+questions are designed to be positively coded so that higher rating
+represents higher level of the construct measured in each question (on
+the scale of 1-6, 1 being "strongly disagree", 6 being "strongly agree).
+
+```{r}
+# Define custom probability distributions for each Likert question
+generate_likert <- function(condition, question) {
+  if (question == "knowledge") {
+    probs <- rep(1/6, 6)  # Uniform distribution for all conditions
+  } else if (question == "interest") {
+    probs <- switch(condition,
+                    "1.0x" = rep(1/6, 6),
+                    "1.5x" = rep(1/6, 6),
+                    "1.7x" = c(0.1, 0.12, 0.18, 0.2, 0.2, 0.2),
+                    "2.0x" = c(0.12, 0.15, 0.18, 0.2, 0.2, 0.15)
+    )
+  } else if (question == "attention") {
+    probs <- switch(condition,
+                    "1.0x" = c(0.1, 0.25, 0.3, 0.2, 0.1, 0.05),
+                    "1.5x" = c(0.12, 0.18, 0.25, 0.2, 0.15, 0.1),
+                    "1.7x" = c(0.1, 0.1, 0.25, 0.3, 0.15, 0.1),
+                    "2.0x" = c(0.2, 0.1, 0.12, 0.15, 0.18, 0.25)
+    )
+  } else if (question == "retention") {
+    probs <- switch(condition,
+                    "1.0x" = c(0.12, 0.25, 0.25, 0.2, 0.12, 0.06),
+                    "1.5x" = c(0.1, 0.2, 0.3, 0.2, 0.12, 0.08),
+                    "1.7x" = c(0.05, 0.12, 0.25, 0.3, 0.18, 0.1),
+                    "2.0x" = c(0.05, 0.1, 0.2, 0.3, 0.2, 0.15)
+    )
+  } else if (question == "difficulty") {
+    probs <- switch(condition,
+                    "1.0x" = c(0.4, 0.3, 0.15, 0.1, 0.05, 0),
+                    "1.5x" = c(0.2, 0.25, 0.25, 0.15, 0.1, 0.05),
+                    "1.7x" = c(0.15, 0.15, 0.25, 0.2, 0.15, 0.1),
+                    "2.0x" = c(0.1, 0.1, 0.15, 0.2, 0.2, 0.25)
+    )
+  } else if (question == "frequency") {
+    probs <- rep(1/6, 6)  
+  }
+  return(sample(1:6, 1, prob = probs))
+}
+
+# Generate Likert responses for each participant
+likert_data <- matrix(nrow = nSample, ncol = 6)
+questions <- c("knowledge", "interest", "attention", "retention", "difficulty", "frequency")
+for (i in 1:nSample) {
+  for (j in 1:6) {
+    likert_data[i, j] <- generate_likert(balanced_conditions[i], questions[j])
+  }
+}
+
+
+```
+
+### Create dataframe
+
+Combining the response data, reaction time data, and Likert response
+into a single dataframe.
+
+```{r}
+
+# Create the dataframe
+speedListeningData <- data.frame(
+  participant_id = 1:nSample,
+  condition = balanced_conditions,
+  responses,                    
+  accuracy = individual_accuracy, 
+  reaction_times,                 
+  likert_data                     
+)
+
+# Rename columns
+colnames(speedListeningData)[3:(2 + nTrials)] <- paste0("trial_", 1:nTrials)
+colnames(speedListeningData)[9] <- "accuracy"
+colnames(speedListeningData)[10:(9 + nTrials)] <- paste0("rt", 1:nTrials)
+colnames(speedListeningData)[(10 + nTrials):(9 + nTrials + 6)] <- questions
+
+```
+
+## Calculating IES
+
+In my pre-registration, I planned to combine accuracy and reaction time
+into one index for attention by using the Inverse Efficiency Score
+(IES). As the simulated accuracy score is randomly generated across all
+conditions and trials, it could potentially introduce noise into the
+data. I decide to not use IES in this sample analysis.
+
+Here's an example of how IES would be calculated when meaningful data
+are collected.
+
+*Note*: a higher IES value indicates poorer attention ( = long reaction
+time and low accuracy score).
+
+```{r}
+# Calculate mean reaction time for each participant
+speedListeningData$mean_rt <- rowMeans(speedListeningData[, 10:(9 + nTrials)])
+
+# IES calculation (mean RT / mean accuracy)
+speedListeningData$IES <- speedListeningData$mean_rt / speedListeningData$accuracy
+
+# View the dataframe with the new IES column
+head(speedListeningData[,c(1,2,9,22,23)])
+```
+
+# Descriptive Statistics and Visualization
+
+```{r}
+head(speedListeningData)
+```
+
+```{r}
+summary(speedListeningData)
+```
+
+### Reaction time by Conditions
+
+```{r}
+# Define warm color palette for condition plots 
+warm_palette <- c("#FF4500", "#FF8C33", "#DAA520", "#FFE333")  
+
+# Define cool color palette for trial plots
+cool_palette <- c("#9370DB","#33A1FF","#33FFF6","#B0E0E6", "#33FFB8","#3CB371")
+
+```
+
+*How does reaction time (and by extension, **attention**) distribution
+differ based on listening speeds?*
+
+```{r}
+# Convert data to long format
+long_data <- speedListeningData %>%
+  pivot_longer(cols = starts_with("rt"), names_to = "trial", values_to = "reaction_time") %>%
+  mutate(trial = as.numeric(gsub("rt", "", trial)))  # Convert "rt1" to "1", etc.
+
+# Descriptive stats by condition
+summary_by_condition <- tapply(long_data$reaction_time, long_data$condition, summary)
+print(summary_by_condition)
+```
+
+```{r}
+# Plot reaction time by condition with actual data points
+ggplot(long_data, aes(x = condition, y = reaction_time, fill = condition)) +
+  geom_boxplot(alpha = 0.6, outlier.shape = NA) +  
+  geom_jitter(color = "black", size = 1, alpha = 0.5, width = 0.2) +  #individual data points
+  scale_fill_manual(values = warm_palette) + 
+  theme_minimal() +  
+  labs(title = "Reaction Time Distribution by Condition",
+       x = "Playback Speed Condition",
+       y = "Reaction Time (ms)") +
+  theme(legend.position = "none") 
+
+```
+
+### Reaction time by Trials
+
+*How does reaction time (and by extension, **attention**) distribution
+differ based on trial number (passage of time)?*
+
+```{r}
+# Descriptive stats by trial
+summary_by_trial <- tapply(long_data$reaction_time, long_data$trial, summary)
+print(summary_by_trial)
+```
+
+```{r}
+
+# Plot reaction time by trial
+ggplot(long_data, aes(x = factor(trial), y = reaction_time, fill = factor(trial))) +
+  geom_boxplot(alpha = 0.6, outlier.shape = NA) +  
+  geom_jitter(color = "black", size = 1, alpha = 0.5, width = 0.2) +  
+  scale_fill_manual(values = cool_palette) +
+  theme_minimal() + 
+  labs(title = "Reaction Time Distribution by Trial Number",
+       x = "Trial Number",
+       y = "Reaction Time (ms)") +
+  theme(legend.position = "none")  
+
+```
+
+# Inferential Statistics and Visualization
+
+## Mixed Design ANOVA
+
+```{r}
+anova_model <- aov_ez(
+  id = "participant_id",     # Participant ID 
+  dv = "reaction_time",      # Dependent variable
+  within = "trial",          # Within-subjects factor (trial 1-6)
+  between = "condition",     # Between-subjects factor (listening speed)
+  data = long_data
+)
+
+summary(anova_model)  # View ANOVA results
+
+```
+
+### Key Results:
+
+**Main effect of condition**:
+
+-   F(3, 88)=137.72, p\<.001
+
+-   The effect of conditions on reaction time is significant.
+
+**Main effect of trial**:
+
+-   F(5, 440)=4.22, p=.001
+
+<!-- -->
+
+-   The effect of trial (i.e. time) on reaction time is significant.
+
+**Condition × trial interaction**:
+
+-   F(15, 440)=0.64, p=.838
+
+-   The interaction between condition and trial number is not
+    significant.
+
+Mauchly Tests for Sphericity yielded non-significant result for both
+trial and condition\*trial interaction (*p=0.82311*), meaning that
+sphericity assumption has not been violated.
+
+## Effect size
+
+```{r}
+eta_squared(anova_model)
+```
+
+**Condition:**
+
+-   η²p = 0.78, 95% CI: [0.72, 1.00]
+
+-   There is a very large effect of condition (speed levels) on reaction
+    time.
+
+**Trial:**
+
+-   η²p = 0.04, 95% CI: [0.01, 1.00]
+-   There is a small effect size of trial number on reaction time.
+
+**Condition × Trial Interaction:**
+
+-   η²p = 0.02, 95% CI: [0.00, 1.00]
+-   **There is a very small or negligible effect** of the interaction on
+    reaction time.
+
+## Post hoc tests
+
+### **Main effect for condition**
+
+Since condition is a between-subject factor, Tukey’s HSD or Games-Howell
+can be used to test the main effect, depending on if the assumption of
+homogeneity of variance is violated.
+
+```{r}
+# checking homogeneity of variance asusmption
+leveneTest(reaction_time ~ condition, data = long_data)
+```
+
+Levene test result is not significant, meaning that the assumption of
+homogeneity of variance is not violated. Therefore, Tukey’s HSD can be
+used.
+
+```{r}
+#fitting the anova model to Tuckey HSD function
+anova_model_fit <- aov(reaction_time ~ condition, data = long_data)
+
+TukeyHSD(anova_model_fit)
+```
+
+Tukey's HSD test reveals that all comparisons between conditions are
+significant.
+
+-   The largest difference is between 1.0x and 2.0 conditions
+    (diff=1983.4979, p\<.001)
+
+-   This result is to be expected given the simulation parameters.
+
+### Visualization of main effect of condition
+
+```{r}
+# Calculate mean and sd for each condition
+condition_summary <- long_data %>%
+  group_by(condition) %>%
+  summarise(
+    mean_rt = mean(reaction_time, na.rm = TRUE),
+    sd_rt = sd(reaction_time, na.rm = TRUE),
+    se_rt = sd_rt / sqrt(n())
+  )
+
+# bar plot with sd error bars and significance brackets
+condition_plot <- ggplot(condition_summary, aes(x = condition, y = mean_rt, fill = condition)) +
+  geom_bar(stat = "identity", position = position_dodge(), alpha = 0.7) +
+  geom_errorbar(aes(ymin = mean_rt - sd_rt, ymax = mean_rt + sd_rt), 
+                width = 0.2, position = position_dodge(0.9)) +
+  scale_fill_manual(values = warm_palette) +
+  theme_minimal() +
+  labs(title = "Main Effect of Playback Speed on Reaction Time",
+       x = "Playback Speed Condition",
+       y = "Mean Reaction Time (ms)",
+       caption = "Error bars represent standard deviation") +
+  theme(legend.position = "none")
+
+
+condition_plot + 
+  geom_signif(
+    comparisons = list(c("1.0x", "1.5x"), c("1.5x", "1.7x"), 
+                      c("1.7x", "2.0x"), c("1.0x", "2.0x")),
+    map_signif_level = TRUE,
+    y_position = c(max(condition_summary$mean_rt + condition_summary$sd_rt) * 1.05,
+                  max(condition_summary$mean_rt + condition_summary$sd_rt) * 1.15,
+                  max(condition_summary$mean_rt + condition_summary$sd_rt) * 1.25,
+                  max(condition_summary$mean_rt + condition_summary$sd_rt) * 1.35),
+    tip_length = 0.05,
+    annotations = c("p<0.0001", "p<0.0001", "p<0.05", "p<0.0001")
+  )
+
+```
+
+### **Main effect for time (trials)**:
+
+Since the trial number is a within-subject factor, paired t-test can be
+used to test the main effect.
+
+```{r}
+#pairwise.t.test function
+pairwise_results <- pairwise.t.test(
+  long_data$reaction_time, 
+  long_data$trial,
+  paired = TRUE,
+  p.adjust.method = "bonferroni"
+)
+
+print(pairwise_results)
+```
+
+**Significant Comparisons:**
+
+-   Trial 2 vs. Trial 4: p = 0.0066
+
+-   Trial 2 vs. Trial 6: p = 0.0141
+
+-   All other pairwise comparisons between trials show no significant
+    differences (p \> 0.05)
+
+## Visualization of main effect of trial
+
+```{r}
+# Calculate mean and sd for each trial
+trial_summary <- long_data %>%
+  group_by(trial) %>%
+  summarise(
+    mean_rt = mean(reaction_time, na.rm = TRUE),
+    sd_rt = sd(reaction_time, na.rm = TRUE),
+    se_rt = sd_rt / sqrt(n())
+  )
+
+# bar plot with standard deviation error bars
+trial_plot <- ggplot(trial_summary, aes(x = factor(trial), y = mean_rt, fill = factor(trial))) +
+  geom_bar(stat = "identity", position = position_dodge(), alpha = 0.7) +
+  geom_errorbar(aes(ymin = mean_rt - sd_rt, ymax = mean_rt + sd_rt), 
+                width = 0.2, position = position_dodge(0.9)) +
+  scale_fill_manual(values = cool_palette) +
+  theme_minimal() +
+  labs(title = "Main Effect of Trial Number on Reaction Time",
+       x = "Trial Number",
+       y = "Mean Reaction Time (ms)",
+       caption = "Error bars represent standard deviation") +
+  theme(legend.position = "none")
+
+# Add significance brackets for the significant trial comparisons
+trial_plot +
+  geom_signif(
+    comparisons = list(c("2", "4"), c("2", "6")),
+    map_signif_level = TRUE,
+    y_position = c(max(trial_summary$mean_rt + trial_summary$sd_rt) * 1.05,
+                  max(trial_summary$mean_rt + trial_summary$sd_rt) * 1.15),
+    tip_length = 0.05,
+    annotations = c("p<0.01", "p<0.05")
+  )
+
+```
+
+## Visualization of interaction effect
+
+Even though the interaction between condition and trial number is not
+significant, we can plot the reaction time by condition and trial to
+better visualize the dynamic change in attention throughout the
+experiment.
+
+```{r}
+condition_colors <- c("#E69F00", "#D55E00", "#CC79A7", "#0072B2")
+
+ggplot(long_data, aes(x = factor(trial), y = reaction_time, color = condition, group = condition)) +
+  stat_summary(fun = mean, geom = "line", size = 1) +
+  stat_summary(fun.data = mean_se, geom = "errorbar", width = 0.2) +
+  scale_color_manual(values = condition_colors) + 
+  labs(title = "Simulated Reaction Time with Condition × Trial Interaction",
+       x = "Trial",
+       y = "Reaction Time (ms)",
+       color = "Condition") +
+  theme_minimal()
+
+```
+
+# Exploratory Analysis
+
+*How does participants' self-reported attention correlate with objective
+attention measure (since there's no expected result for exploratory
+analysis, IES is used here).*
+
+```{r}
+# First, prepare the data using IES instead of average reaction time
+attention_ies_data <- speedListeningData %>%
+  # IES is already calculated in your dataset
+  select(participant_id, condition, attention, IES)
+
+# View the prepared data
+head(attention_ies_data)
+
+# Calculate correlation between self-reported attention and IES
+correlation_result <- cor.test(attention_ies_data$attention, 
+                              attention_ies_data$IES,
+                              method = "pearson")
+
+# Print correlation results
+print(correlation_result)
+
+# Calculate summary statistics for reporting
+correlation_summary <- data.frame(
+  r = correlation_result$estimate,
+  p_value = correlation_result$p.value,
+  lower_ci = correlation_result$conf.int[1],
+  upper_ci = correlation_result$conf.int[2]
+)
+
+print(correlation_summary)
+
+```
+
+#### Key Findings:
+
+-   Correlation coefficient (r) = -0.129, showing a very weak negative
+    correlation between attention and IES.
+
+-   p-value = 0.220, the correlation is not statistically significant (p
+    \> 0.05).
+
+-   95% Confidence Interval: (-0.3252, 0.0778), which includes 0.
+
+```{r}
+# Create a scatter plot that accurately shows the weak correlation
+att_correlation_plot <- ggplot(attention_ies_data, 
+                               aes(x = attention, y = IES)) +
+  geom_jitter(aes(color = condition), size = 1.5, alpha = 0.6, 
+              width = 0.2, height = 0) +
+  geom_smooth(method = "lm", color = "black", se = TRUE, linetype = "dashed") +
+  scale_color_manual(values = warm_palette) +
+  labs(title = "Self-Reported Attention and Performance Efficiency",
+       subtitle = paste("No significant correlation found (r = -0.129, p = 0.220)"),
+       x = "Self-Reported Attention Level (1-6)",
+       y = "Inverse Efficiency Score (IES)",
+       caption = "Lower IES values indicate better performance efficiency",
+       color = "Speed Condition") +
+  theme_minimal() +
+  theme(legend.position = "bottom") +
+  # Add a horizontal reference line at mean IES
+  geom_hline(yintercept = mean(attention_ies_data$IES, na.rm = TRUE), 
+             linetype = "dotted", color = "darkgray")
+
+print(att_correlation_plot)
+```
