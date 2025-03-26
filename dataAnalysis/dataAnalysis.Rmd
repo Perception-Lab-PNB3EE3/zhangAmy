@@ -70,11 +70,11 @@ trials.
 # Define reaction time distributions for each condition & trial
 generate_rt <- function(condition, trial) {
   if (condition == "1.0x") {
-    return(rnorm(1, mean = 4500 + (trial * 10), sd = 1000))  
+    return(rnorm(1, mean = 4500 + (trial * 15), sd = 1000))  
   } else if (condition == "1.5x") {
-    return(rnorm(1, mean = 5000 + (trial * 30), sd = 1000))
+    return(rnorm(1, mean = 5000 + (trial * 20), sd = 1000))
   } else if (condition == "1.7x") {
-    return(rnorm(1, mean = 5700 + (trial * 75), sd = 1000))  
+    return(rnorm(1, mean = 5700 + (trial * 25), sd = 1000))  
   } else if (condition == "2.0x") {
     return(rnorm(1, mean = 6000 + (trial * 145), sd = 1000))  
   }
@@ -302,20 +302,17 @@ summary(anova_model)  # View ANOVA results
 **Main effect of trial**:
 
 -   F(5, 440)=4.22, p=.001
-
-<!-- -->
-
 -   The effect of trial (i.e. time) on reaction time is significant.
 
 **Condition × trial interaction**:
 
--   F(15, 440)=0.64, p=.838
+-   F(15, 440)=0.71, p=0.780
 
 -   The interaction between condition and trial number is not
     significant.
 
 Mauchly Tests for Sphericity yielded non-significant result for both
-trial and condition\*trial interaction (*p=0.82311*), meaning that
+trial and condition\*trial interaction (*p=0.8231*), meaning that
 sphericity assumption has not been violated.
 
 ## Effect size
@@ -326,7 +323,7 @@ eta_squared(anova_model)
 
 **Condition:**
 
--   η²p = 0.78, 95% CI: [0.72, 1.00]
+-   η²p = 0.81, 95% CI: [0.76, 1.00]
 
 -   There is a very large effect of condition (speed levels) on reaction
     time.
@@ -339,7 +336,7 @@ eta_squared(anova_model)
 **Condition × Trial Interaction:**
 
 -   η²p = 0.02, 95% CI: [0.00, 1.00]
--   **There is a very small or negligible effect** of the interaction on
+-   There is a very small or negligible effect of the interaction on
     reaction time.
 
 ## Post hoc tests
@@ -370,7 +367,7 @@ Tukey's HSD test reveals that all comparisons between conditions are
 significant.
 
 -   The largest difference is between 1.0x and 2.0 conditions
-    (diff=1983.4979, p\<.001)
+    (diff=1965.9979, p\<.001)
 
 -   This result is to be expected given the simulation parameters.
 
