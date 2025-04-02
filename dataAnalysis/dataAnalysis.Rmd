@@ -239,7 +239,7 @@ print(summary_by_condition)
 ggplot(long_data, aes(x = condition, y = reaction_time, fill = condition)) +
   geom_boxplot(alpha = 0.6, outlier.shape = NA) +  
   geom_jitter(color = "black", size = 1, alpha = 0.5, width = 0.2) +  #individual data points
-  scale_fill_manual(values = warm_palette) + 
+  scale_fill_manual(values = condition_colors) + 
   theme_minimal() +  
   labs(title = "Reaction Time Distribution by Condition",
        x = "Playback Speed Condition",
@@ -388,7 +388,7 @@ condition_plot <- ggplot(condition_summary, aes(x = condition, y = mean_rt, fill
   geom_bar(stat = "identity", position = position_dodge(), alpha = 0.7) +
   geom_errorbar(aes(ymin = mean_rt - sd_rt, ymax = mean_rt + sd_rt), 
                 width = 0.2, position = position_dodge(0.9)) +
-  scale_fill_manual(values = warm_palette) +
+  scale_fill_manual(values = condition_colors) +
   theme_minimal() +
   labs(title = "Main Effect of Playback Speed on Reaction Time",
        x = "Playback Speed Condition",
@@ -484,7 +484,7 @@ better visualize the dynamic change in attention throughout the
 experiment.
 
 ```{r}
-condition_colors <- c("#E69F00", "#D55E00", "#CC79A7", "#0072B2")
+condition_colors <- c("#FFE333","#FF4500", "#CC79A7", "#0072B2")
 
 ggplot(long_data, aes(x = factor(trial), y = reaction_time, color = condition, group = condition)) +
   stat_summary(fun = mean, geom = "line", size = 1) +
